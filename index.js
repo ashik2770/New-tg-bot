@@ -7,7 +7,7 @@ const app = express();
 // Configuration
 const config = {
     token: '8079488155:AAEt6Gp1lE1UgIx6ylYQUuUKFxD0bko2ilU',
-    webAppUrl: 'https://your-webapp.vercel.app',
+    webAppUrl: 'https://ashik2770.github.io/New-tg-bot/',
     channelUrl: 'https://t.me/YourChannel',
     adminIds: ['7442526627'], // Replace with your Telegram ID
     dataDir: path.join(__dirname, 'data')
