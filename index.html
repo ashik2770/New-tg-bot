@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch & Earn</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="//niphaumeenses.net/vignette.min.js" data-zone="8969460" data-sdk="show_8969460"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #1a0033, #330066, #4d0099);
+            color: #ffd700;
+            padding-top: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Profile Card */
+        .user-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            width: 90%;
+            max-width: 400px;
+            background: #333;
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            color: #ffd700;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid #ffd700;
+            object-fit: cover;
+        }
+
+        /* Points & Balance Section */
+        .balance-container {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 15px;
+        }
+
+        .balance-card {
+            flex: 1;
+            padding: 15px;
+            background: #444;
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            text-align: center;
+            color: #ffd700;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+            margin: 5px;
+        }
+
+        /* Reward Button */
+        .reward-button {
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #1a1a1a;
+            background-color: #ffd700;
+            border: none;
+            border-radius: 8px;
+            transition: background 0.3s, transform 0.3s;
+            box-shadow: 0px 5px 15px rgba(255, 215, 0, 0.4);
+            font-weight: bold;
+            margin-top: 10px;
+            width: 90%;
+        }
+
+        .reward-button:hover {
+            background-color: #e5c100;
+            transform: scale(1.05);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 60px;
+            width: 90%;
+            max-width: 400px;
+            background: #333;
+            padding: 12px 0;
+            color: #ffd700;
+            border-radius: 10px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .bottom-nav a {
+            text-align: center;
+            color: #ffd700;
+            font-size: 1.2em;
+            text-decoration: none;
+            flex: 1;
+            transition: color 0.3s;
+        }
+
+        .bottom-nav a:hover { color: #fff700; }
+
+        .bottom-nav i {
+            display: block;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+
+
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #1a0033, #330066, #4d0099);
+            color: #ffd700;
+            padding-top: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating Bubble Animation */
+        .bubble-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: bubbleFloat linear infinite;
+        }
+
+        @keyframes bubbleFloat {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(var(--side-move)); opacity: 0; }
+        }
+
+        /* Profile Card */
+        .user-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            width: 90%;
+            max-width: 400px;
+            background: #333;
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            color: #ffd700;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid #ffd700;
+        }
+
+        /* Points & Balance Section */
+        .balance-container {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 15px;
+        }
+
+        .balance-card {
+            flex: 1;
+            padding: 15px;
+            background: #444;
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            text-align: center;
+            color: #ffd700;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+            margin: 5px;
+        }
+
+        /* Reward Button */
+        .reward-button {
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #1a1a1a;
+            background-color: #ffd700;
+            border: none;
+            border-radius: 8px;
+            transition: background 0.3s, transform 0.3s;
+            box-shadow: 0px 5px 15px rgba(255, 215, 0, 0.4);
+            font-weight: bold;
+            margin-top: 10px;
+            width: 90%;
+        }
+
+        .reward-button:hover {
+            background-color: #e5c100;
+            transform: scale(1.05);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 60px;
+            width: 90%;
+            max-width: 400px;
+            background: #333;
+            padding: 12px 0;
+            color: #ffd700;
+            border-radius: 10px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .bottom-nav a {
+            text-align: center;
+            color: #ffd700;
+            font-size: 1.2em;
+            text-decoration: none;
+            flex: 1;
+            transition: color 0.3s;
+        }
+
+        .bottom-nav a:hover { color: #fff700; }
+
+        .bottom-nav i {
+            display: block;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+        
+        .clear-button {
+    background-color: #ff4d4d;
+    color: white;
+    margin-top: 10px;
+}
+
+.clear-button:hover {
+    background-color: #cc0000;
+}
+    </style>
+</head>
+<body>
+    
+    <!-- Floating Bubble Background -->
+    <div class="bubble-container"></div>
+
+    <!-- Profile Card -->
+    <div class="user-card">
+        <img src="https://via.placeholder.com/50" class="user-avatar" id="userAvatar">
+        <div>
+            <h2 id="userName">Loading...</h2>
+            <p>@<span id="userID">loading...</span></p>
+        </div>
+    </div>
+
+    <!-- Points & Balance Cards -->
+    <div class="balance-container">
+        <div class="balance-card">
+            <h3>Points</h3>
+            <h2 id="reward-count">0</h2>
+        </div>
+        <div class="balance-card">
+            <h3>Balance</h3>
+            <h2>$<span id="balance">0.00</span></h2>
+        </div>
+    </div>
+
+    <button class="reward-button" onclick="showRewardedAd()">Watch Ad & Earn</button>
+<button class="reward-button clear-button" onclick="clearData()">Clear Data</button>
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="#"><i class="fas fa-home"></i>Home</a>
+        <a href="https://t.me/share/url?url=https://t.me/techhasnofetch55bot"><i class="fas fa-share-alt"></i>Share</a>
+        <a href="https://t.me/adbdlabbd" target="_blank"><i class="fas fa-user-tie"></i>Developer</a>
+    </div>
+
+    <script>
+        function loadUserData() {
+            if (window.Telegram.WebApp) {
+                let user = window.Telegram.WebApp.initDataUnsafe.user;
+
+                if (user) {
+                    document.getElementById('userName').textContent = user.first_name || "Unknown User";
+                    document.getElementById('userID').textContent = user.username || "No Username";
+                    document.getElementById('userAvatar').src = user.photo_url || "https://via.placeholder.com/50";
+
+                    localStorage.setItem('userName', user.first_name);
+                    localStorage.setItem('userID', user.username);
+                    localStorage.setItem('userAvatar', user.photo_url);
+                }
+            } else {
+                console.log("Telegram WebApp not found!");
+            }
+        }
+
+        // Load User Data on Open
+        loadUserData();
+
+        // Load Saved Data
+        let rewardCount = parseInt(localStorage.getItem('rewardCount')) || 0;  
+        let balance = parseFloat(localStorage.getItem('balance')) || 0.00;  
+
+        document.getElementById('reward-count').textContent = rewardCount;
+        document.getElementById('balance').textContent = balance.toFixed(2);
+
+        function showRewardedAd() {
+            if (typeof show_8969460 === 'function') {
+                show_8969460().then(() => {
+                    rewardCount += 10;  
+                    balance += 0.01;  
+
+                    localStorage.setItem('rewardCount', rewardCount);
+                    localStorage.setItem('balance', balance.toFixed(2));
+
+                    document.getElementById('reward-count').textContent = rewardCount;
+                    document.getElementById('balance').textContent = balance.toFixed(2);
+
+                    alert("Ad Completed! You Earned $0.010!");
+                }).catch(error => {
+                    console.error("Ad failed to load or display:", error);
+                });
+            } else {
+                alert("Ad is not ready yet. Try again later.");
+            }
+        }
+        
+        
+        // Create Floating Bubbles
+        function createBubbles() {
+            const container = document.querySelector('.bubble-container');
+
+            for (let i = 0; i < 20; i++) {
+                let bubble = document.createElement("div");
+                bubble.classList.add("bubble");
+
+                let size = Math.random() * 50 + 20; 
+                let positionX = Math.random() * 100; 
+                let duration = Math.random() * 5 + 5; 
+                let sideMove = (Math.random() - 0.5) * 40 + "px"; 
+
+                bubble.style.width = size + "px";
+                bubble.style.height = size + "px";
+                bubble.style.left = positionX + "vw";
+                bubble.style.animationDuration = duration + "s";
+                bubble.style.setProperty('--side-move', sideMove);
+
+                container.appendChild(bubble);
+            }
+        }
+
+        createBubbles();
+        
+        
+        function clearData() {
+        localStorage.removeItem("rewardCount");
+        localStorage.removeItem("balance");
+        document.getElementById("reward-count").innerText = "0";
+        document.getElementById("balance").innerText = "0.00";
+        alert("Data Cleared Successfully!");
+    }
+    </script>
+
+</body>
+</html>
