@@ -10,21 +10,24 @@ const config = {
     webAppUrl: 'https://ashik2770.github.io/New-tg-bot/',
     channelUrl: 'https://t.me/YourChannel',
     adminIds: ['7442526627'], // Replace with your Telegram ID
-    dataDir: path.join(__dirname, 'data')
+    dataDir: '/tmp' // Use Vercel's temporary directory
 };
 
 // Initialize bot and app
-const bot = new TelegramBot(config.token, { polling: true });
+const bot = new TelegramBot(config.token);
 app.use(express.json());
 
-// Data storage
-const usersFile = path.join(config.dataDir, 'users.json');
+// Data storage (in-memory for serverless)
 let users = {};
+const usersFile = path.join(config.dataDir, 'users.json');
 
 // Utility functions
 const saveUsers = async () => {
-    await fs.mkdir(config.dataDir, { recursive: true });
-    await fs.writeFile(usersFile, JSON.stringify(users, null, 2));
+    try {
+        await fs.writeFile(usersFile, JSON.stringify(users, null, 2));
+    } catch (error) {
+        console.error('Failed to save users:', error);
+    }
 };
 
 const loadUsers = async () => {
@@ -32,9 +35,16 @@ const loadUsers = async () => {
         const data = await fs.readFile(usersFile, 'utf8');
         users = JSON.parse(data);
     } catch (error) {
+        console.log('No existing user data found, starting fresh');
         users = {};
     }
 };
+
+// Set webhook
+app.post('/webhook', (req, res) => {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+});
 
 // Welcome message
 bot.onText(/\/start/, async (msg) => {
@@ -42,8 +52,7 @@ bot.onText(/\/start/, async (msg) => {
     const userId = msg.from.id;
     const userName = msg.from.first_name;
 
-    // Save user data
-    users[userId] = { name: userName, joined: new Date(), points: 0 };
+    users[userId] = { name: userName, joined: new Date(), points: users[userId]?.points || 0 };
     await saveUsers();
 
     const welcomeMessage = `
@@ -112,7 +121,6 @@ bot.onText(/\/broadcast (.+)/, async (msg, match) => {
     let successCount = 0;
 
     try {
-        // Send broadcast with image
         for (const userId in users) {
             await bot.sendPhoto(userId, 'https://picsum.photos/800/400', {
                 caption: `
@@ -179,11 +187,12 @@ Earn more by playing games! 🚀
 });
 
 // Referral system
-bot.onText(/\/refer/, (msg) => {
+bot.onText(/\/refer/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
-    const referLink = `https://t.me/${bot.getMe().then(bot => bot.username)}?start=ref_${userId}`;
+    const botUsername = (await bot.getMe()).username;
+    const referLink = `https://t.me/${botUsername}?start=ref_${userId}`;
     bot.sendMessage(chatId, `
 🌐 *Invite Friends* 🌐
 Share this link: ${referLink}
@@ -194,22 +203,15 @@ Earn 50 bonus points per referral! 🎁
 // Health check
 app.get('/', (req, res) => res.send('🤖 SuperBot is running!'));
 
-// Webhook endpoint
-app.post('/webhook', (req, res) => {
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
-});
-
 // Initialize
 (async () => {
     await loadUsers();
     console.log('Bot initialized!');
+    // Set webhook programmatically (optional, can be done manually too)
+    const webhookUrl = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}/webhook`
+        : 'https://new-tg-bot-indol.vercel.app/';
+    await bot.setWebHook(webhookUrl);
 })();
 
 module.exports = app;
-
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(process.env.PORT || 3000, () => {
-        console.log('Server running locally');
-    });
-}
